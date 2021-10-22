@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
 	"github.com/kolesa-team/scylla-octopus/pkg/entity"
 	"github.com/kolesa-team/scylla-octopus/pkg/environment"
+	"github.com/spf13/cobra"
 	"os"
 )
 
@@ -19,9 +19,17 @@ var (
 		Run: func(cmd *cobra.Command, _ []string) {
 			_ = cmd.Help()
 		},
-		PersistentPreRunE: initialize,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if cmd.Name() == "version" || cmd.Name() == "" {
+				return nil
+			}
+
+			return initialize(cmd, args)
+		},
 		PersistentPostRun: func(cmd *cobra.Command, args []string) {
-			_ = env.Logger.Sync()
+			if env.Logger != nil {
+				_ = env.Logger.Sync()
+			}
 		},
 	}
 )
