@@ -1,0 +1,94 @@
+# a testing environment for scylla-octopus.
+# includes a cluster of 3 scylladb nodes, and an S3 storage implementation from adobe.
+version: "3"
+
+services:
+  # database node #1
+  scylla-node1:
+    image: scylladb/scylla:4.5.0
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      # a directory with shared files for setup and testing
+      - "./test:/test"
+      # scylladb configuration
+      - "./test/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "./test/node1/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+      # scylladb data directories.
+      - "./test/node1/data:/var/lib/scylla/data"
+      - "./test/node1/commitlog:/var/lib/scylla/commitlog"
+      # awscli configuration
+      - "./test/.aws:/root/.aws"
+      # scylla-octopus executable and configuration files
+      - "./output:/scylla-octopus"
+      - "./config:/config"
+    networks:
+      # make sure a container address is static, which makes the SSH access easier.
+      octopus:
+        ipv4_address: 10.5.0.2
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "1"
+  # database node #2
+  scylla-node2:
+    image: scylladb/scylla:4.5.0
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./test:/test"
+      - "./test/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "./test/node2/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+      - "./test/node2/data:/var/lib/scylla/data"
+      - "./test/node2/commitlog:/var/lib/scylla/commitlog"
+      - "./test/.aws:/root/.aws"
+      - "./output:/scylla-octopus"
+      - "./config:/config"
+    networks:
+      octopus:
+        ipv4_address: 10.5.0.3
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "1"
+  # database node #3
+  scylla-node3:
+    image: scylladb/scylla:4.5.0
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./test:/test"
+      - "./test/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "./test/node3/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+      - "./test/node3/data:/var/lib/scylla/data"
+      - "./test/node3/commitlog:/var/lib/scylla/commitlog"
+      - "./test/.aws:/root/.aws"
+      - "./output:/scylla-octopus"
+      - "./config:/config"
+    networks:
+      octopus:
+        ipv4_address: 10.5.0.4
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "1"
+  # s3 storage implementation for testing
+  s3:
+    image: adobe/s3mock
+    #ports:
+    #  - "9090:9090"
+    networks:
+      octopus:
+        ipv4_address: 10.5.0.6
+    environment:
+      - initialBuckets=backup-scylladb
+      # uncomment to observe S3 commands being executed
+      # - debug=true
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "1"
+networks:
+  octopus:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1

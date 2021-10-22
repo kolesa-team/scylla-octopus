@@ -1,0 +1,8 @@
+output/*
+/.idea
+/vendor
+.DS_Store
+/tmp
+/test/node*/data/*
+/test/node*/commitlog/*
+dist/

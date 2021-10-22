@@ -1,0 +1,10 @@
+/.idea
+.DS_Store
+Dockerfile*
+.gitignore
+.dockerignore
+/.git
+/README.md
+/test
+/dist
+/vendor

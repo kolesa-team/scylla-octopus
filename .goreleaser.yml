@@ -1,0 +1,35 @@
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+    ldflags:
+      - -s -w -X github.com/kolesa-team/scylla-octopus/cmd.version=v{{.Version}} -X github.com/kolesa-team/scylla-octopus/cmd.commit={{.Commit}} -X github.com/kolesa-team/scylla-octopus/cmd.buildDate={{.Date}}
+
+archives:
+  -
+    files:
+      - config/*
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+release:
+  draft: true
+  extra_files:
+    - glob: ./config/*.yml

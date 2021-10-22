@@ -1,0 +1,68 @@
+# configuration for running a tool with database nodes from docker-compose.yml over SSH
+
+credentials:
+  user: cassandra
+  password: cassandra
+
+cluster:
+  hosts:
+    # ip addresses from remote.yml.
+    # can also accept domain names (except this doesn't work with docker-compose).
+    - 10.5.0.2
+    - 10.5.0.3
+    - 10.5.0.4
+  dataPath: /var/lib/scylla/data
+  binaries:
+    cqlsh: /usr/bin/cqlsh
+    nodetool: /usr/bin/nodetool
+
+commands:
+  ssh:
+    username: root
+    keyFile: test/ssh/id_rsa
+    # SSH key password, if any
+    # keyPassword: ""
+    # can also use a plain text password instead of a key
+    # password: ""
+
+  # in debug mode, every command is printed to the console
+  debug: false
+
+backup:
+  # scylladb snapshot tag.
+  # if empty, the snapshot tag is generated using current date and a hostname.
+  snapshotTag: test-snapshot
+  # a list of keyspaces to back up.
+  # empty means all keyspaces.
+  keyspaces: [ ]
+  # where to store a backup on a database host before uploading to s3
+  localPath: /var/lib/scylla/backup
+
+  # uncomment to disable uploading to remote storage
+  # disableUpload: true
+
+  # should local directories be cleaned up after uploading to s3
+  cleanupLocal: true
+  # should the expired backups be removed from s3 after a new backup is created
+  cleanupRemote: true
+  # backup lifetime in s3
+  # (go duration format https://pkg.go.dev/time#ParseDuration)
+  retention: "12h"
+
+awscli:
+  binary: /usr/local/bin/aws
+  bucket: backup-scylladb
+  # a test implementation of s3 (see docker-compose.yml)
+  endpointUrl: http://s3:9090
+  profile: adobe-s3mock
+
+log:
+  # use debug for development and info for regular usage
+  level: info
+
+notifier:
+  # a webhook URL to send notifications to
+  # (sends a form-data POST request with html-formatted notification within "messageField")
+  webhook:
+  # url: "http://my-notification-service"
+  # messageField: "message"
