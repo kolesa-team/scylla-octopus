@@ -26,7 +26,7 @@ docker-image:
 
 # prepares a database node from docker-compose for development.
 # example: make prepare-test-node node=scylla-node1
-prepare-test-node: add-ssh-key install-awscli
+prepare-test-node: add-ssh-key install-awscli install-pigz
 
 # creates a database with example dataset for testing.
 # example: make init-db node=scylla-node1
@@ -37,6 +37,11 @@ init-db:
 # example: make install-awscli node=scylla-node1
 install-awscli:
 	docker-compose exec $(node) /test/aws-cli-install.sh
+
+# install pigz for compress backup
+# example: make install-pigz node=scylla-node1
+install-pigz:
+	docker-compose exec $(node) /test/pigz-install.sh
 
 # adds an SSH key to a given node,
 # so that scylla-octopus can log in over SSH

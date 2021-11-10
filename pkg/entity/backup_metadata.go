@@ -12,6 +12,7 @@ type BackupMetadata struct {
 	Keyspaces   []string
 	SnapshotTag string    `yaml:"snapshotTag"`
 	BuildInfo   BuildInfo `yaml:"buildInfo"`
+	Archive     Archive   `yaml:"archive"`
 }
 
 func (b BackupMetadata) Bytes() []byte {
