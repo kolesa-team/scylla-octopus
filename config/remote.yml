@@ -49,6 +49,16 @@ backup:
   # (go duration format https://pkg.go.dev/time#ParseDuration)
   retention: "12h"
 
+  # uncomment for compress backup before upload to s3
+  # archive:
+  #   method: pigz
+  #   options:
+  #     # compression level
+  #     compression: 9
+  #     # number of threads used for compression
+  #     threads: 4
+
+
 awscli:
   binary: /usr/local/bin/aws
   bucket: backup-scylladb

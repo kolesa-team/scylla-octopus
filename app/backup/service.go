@@ -2,10 +2,11 @@ package backup
 
 import (
 	"context"
-	"github.com/pkg/errors"
+	"github.com/kolesa-team/scylla-octopus/pkg/archive"
 	"github.com/kolesa-team/scylla-octopus/pkg/cmd"
 	"github.com/kolesa-team/scylla-octopus/pkg/entity"
 	"github.com/kolesa-team/scylla-octopus/pkg/notifier"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"strings"
 	"time"
@@ -39,6 +40,8 @@ type Options struct {
 	CleanupRemote bool `yaml:"cleanupRemote"`
 	// How long should the backups live in remote storage
 	Retention time.Duration
+	// Settings for compress backup
+	Archive entity.Archive
 }
 
 // database client interface (implemented by `pkg/scylla`)
@@ -90,6 +93,17 @@ func (s *Service) Healthcheck(ctx context.Context, node *entity.Node) error {
 		}
 	}
 
+	if s.options.Archive.Method == "pigz" {
+		err := cmd.ExecutableFileExists(ctx, node.Cmd, "pigz")
+
+		if err != nil {
+			return errors.Wrap(
+				err,
+				"pigz not installed",
+			)
+		}
+	}
+
 	return nil
 }
 
@@ -119,6 +133,10 @@ func (s *Service) Backup(ctx context.Context, node *entity.Node) entity.BackupRe
 		Keyspaces:   s.options.Keyspaces,
 		SnapshotTag: result.SnapshotTag,
 		BuildInfo:   s.buildInfo,
+	}
+
+	if s.options.Archive.Method != "" {
+		metadata.Archive = s.options.Archive
 	}
 
 	result.Error = s.writeMetadata(ctx, node.Cmd, node.Info.Host, metadata)
@@ -206,6 +224,14 @@ func (s *Service) exportSnapshot(ctx context.Context, node *entity.Node, snapsho
 	err = s.scylla.CreateSnapshot(ctx, node, snapshotTag, dataDir, s.options.Keyspaces)
 	if err != nil {
 		return err
+	}
+
+	if s.options.Archive.Method != "" {
+		err = archive.Compress(ctx, node, s.options.LocalPath, s.options.Archive)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	logCtx.Infow("snapshot created", "tag", snapshotTag)

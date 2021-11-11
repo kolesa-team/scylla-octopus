@@ -11,10 +11,14 @@ import (
 func ExecutableFileExists(ctx context.Context, executor Executor, file string) error {
 	err := executor.Run(ctx, Command("test", "-x", file))
 	if err != nil {
-		return fmt.Errorf(
-			"an executable %s is unavailable",
-			file,
-		)
+		err = executor.Run(ctx, Command("whereis", file))
+
+		if err != nil {
+			return fmt.Errorf(
+				"an executable %s is unavailable",
+				file,
+			)
+		}
 	}
 
 	return nil
