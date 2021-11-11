@@ -216,7 +216,7 @@ func (s *Service) exportSnapshot(ctx context.Context, node *entity.Node, snapsho
 	}
 
 	if s.options.Archive.Method != "" {
-		err = archive.Compression(ctx, node, s.options.LocalPath, s.options.Archive)
+		err = archive.Compress(ctx, node, s.options.LocalPath, s.options.Archive)
 
 		if err != nil {
 			return err

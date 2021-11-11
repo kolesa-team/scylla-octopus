@@ -8,16 +8,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Compression compression backup before upload to s3
-func Compression(ctx context.Context, node *entity.Node, localPath string, archive entity.Archive) error {
-	options := fmt.Sprintf("-%s -p%s", archive.Options.Compression, archive.Options.Threads)
+// Compress compression backup before upload to s3
+func Compress(ctx context.Context, node *entity.Node, localPath string, archive entity.Archive) error {
+	options := fmt.Sprintf("-%s -p%s", archive.ArchiveOptions.Compression, archive.ArchiveOptions.Threads)
 	archiveName := "backup.tar." + archive.Method
 
 	_, err := node.Cmd.Execute(ctx, cmd.Command(
 		"sh",
 		"-c",
 		fmt.Sprintf(
-			`'cd %s && /usr/bin/tar cf - ./ --exclude='./%s' | %s %s > %s'`,
+			`'cd %s && tar --exclude='%s' -cf - ./ | %s %s > %s'`,
 			localPath,
 			archiveName,
 			archive.Method,
@@ -29,7 +29,7 @@ func Compression(ctx context.Context, node *entity.Node, localPath string, archi
 	if err != nil {
 		return errors.Wrapf(
 			err,
-			"failed to compress backup. Method: %s. Options: %s.",
+			"failed to compress backup. Method: %s. ArchiveOptions: %s.",
 			archive.Method,
 			options,
 		)
@@ -44,7 +44,7 @@ func clearDirectory(ctx context.Context, node *entity.Node, localPath string, ar
 		"sh",
 		"-c",
 		fmt.Sprintf(
-			`'cd %s && find . ! -name "%s" -exec rm -rf {} +'`,
+			`'cd %s && find * ! -name "%s" -exec rm -rf {} +'`,
 			localPath,
 			archiveName,
 		),
