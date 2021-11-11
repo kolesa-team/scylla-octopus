@@ -8,6 +8,7 @@ It attempts to reproduce some functionality of [Scylla Manager](https://docs.scy
 * Back up a single node or a database cluster
   * database schema export
   * snapshots of all or selected keyspaces
+  * optional backup compression with `pigz`
 * Upload a backup to s3-compatible storage with `awscli`
   * Backups in remote storage can be expired and removed automatically
 * Database maintenance with `nodetool repair`
@@ -16,7 +17,6 @@ It attempts to reproduce some functionality of [Scylla Manager](https://docs.scy
 Future plans:
 
 * Backup restoration
-* Backup compression
 * Configure github actions to build a docker image and run tests
 
 ----------------------
@@ -31,6 +31,7 @@ Scylla-octopus - утилита для бэкапа и обслуживания 
 * Бэкап отдельного узла или целого кластера
   * экспорт схемы базы данных
   * снэпшоты всех или выбранных keyspaces
+  * опциональное сжатие бэкапа с помощью `pigz` 
 * Загрузка бэкапов в s3-совместимое хранилище через `awscli`
   * Автоматическое удаление бэкапов в хранилище после истечения заданного срока
 * Обслуживание БД через вызов `nodetool repair`
@@ -39,7 +40,6 @@ Scylla-octopus - утилита для бэкапа и обслуживания 
 Планы:
 
 * Восстановление из бэкапов
-* Сжатие бэкапов
 * Настрйока github actions для сборки docker-образа и запуска тестов
 ---------------------
 
