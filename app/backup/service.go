@@ -93,6 +93,17 @@ func (s *Service) Healthcheck(ctx context.Context, node *entity.Node) error {
 		}
 	}
 
+	if s.options.Archive.Method == "pigz" {
+		err := cmd.ExecutableFileExists(ctx, node.Cmd, "pigz")
+
+		if err != nil {
+			return errors.Wrap(
+				err,
+				"pigz not installed",
+			)
+		}
+	}
+
 	return nil
 }
 
