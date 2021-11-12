@@ -92,7 +92,7 @@ Repairs are executed consecutively. If there is any error, the program stops and
 
 If `go 1.17+` is installed locally, then `make build` will create an executable in `output/scylla-octopus`. 
 
-We can also build a docker image:
+Building docker image:
 
 ```
 make docker-image
