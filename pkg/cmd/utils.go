@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 // This keeps commonly used shell commands
@@ -11,9 +12,15 @@ import (
 func ExecutableFileExists(ctx context.Context, executor Executor, file string) error {
 	err := executor.Run(ctx, Command("test", "-x", file))
 	if err != nil {
-		err = executor.Run(ctx, Command("whereis", file))
+		// if `test` failed, try `whereis` instead.
+		// `whereis` always exits with code 0, so we have to parse its output.
+		// it is successful if it prints "file: path-to-file",
+		// and is not successful if it prints "file:".
+		whereisOutput, _ := executor.Execute(ctx, Command("whereis", file))
+		whereisLines := strings.Split(strings.TrimSpace(string(whereisOutput)), "\n")
+		whereisParts := strings.SplitN(whereisLines[len(whereisLines)-1], ":", 2)
 
-		if err != nil {
+		if len(whereisParts) < 2 || len(whereisParts[1]) == 0 {
 			return fmt.Errorf(
 				"an executable %s is unavailable",
 				file,
