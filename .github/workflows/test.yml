@@ -38,13 +38,11 @@ jobs:
 
       - name: Calculate coverage
         run: |
-          go test -v ./... -covermode=count -coverprofile=coverage.out
+          go test -v ./... -coverprofile=coverage.txt -covermode=atomic
 
-      - name: Convert coverage.out to coverage.lcov
-        uses: jandelgado/gcov2lcov-action@v1.0.6
-
-      - name: Coveralls
-        uses: coverallsapp/github-action@v1.1.2
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v2
         with:
-          github-token: ${{ secrets.github_token }}
-          path-to-lcov: coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.txt
+          verbose: true
