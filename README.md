@@ -3,7 +3,7 @@
 Scylla-octopus attempts to reproduce some functionality of [Scylla Manager](https://docs.scylladb.com/operating-scylla/manager/) (which is not free) and [Medusa for Apache Cassandra](https://github.com/thelastpickle/cassandra-medusa) (which is not compatible with Scylla).
 
 [![Actions Status](https://github.com/kolesa-team/scylla-octopus/workflows/test/badge.svg)](https://github.com/kolesa-team/scylla-octopus/actions)
-[![codecov](https://codecov.io/gh/kolesa-team/scylla-octopus/branch/master/graph/badge.svg)](https://codecov.io/gh/kolesa-team/scylla-octopus)
+[![codecov](https://codecov.io/gh/kolesa-team/scylla-octopus/branch/main/graph/badge.svg?token=j7K2w57hif)](https://codecov.io/gh/kolesa-team/scylla-octopus)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kolesa-team/scylla-octopus)](https://goreportcard.com/report/github.com/kolesa-team/scylla-octopus)
 
 ### Features:
