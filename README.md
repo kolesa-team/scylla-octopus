@@ -1,7 +1,6 @@
-## scylla-octopus: a scylladb backup utility
+## scylla-octopus: backup and maintenance utility for scylladb
 
-Scylla-octopus is a backup and maintenance utility for scylladb.
-It attempts to reproduce some functionality of [Scylla Manager](https://docs.scylladb.com/operating-scylla/manager/) and [Medusa for Apache Cassandra](https://github.com/thelastpickle/cassandra-medusa).
+Scylla-octopus attempts to reproduce some functionality of [Scylla Manager](https://docs.scylladb.com/operating-scylla/manager/) (which is not free) and [Medusa for Apache Cassandra](https://github.com/thelastpickle/cassandra-medusa) (which is not compatible with Scylla).
 
 ### Features:
 
@@ -21,7 +20,7 @@ Future plans:
 
 ----------------------
 
-### По-русски
+### О проекте
 
 Scylla-octopus - утилита для бэкапа и обслуживания scylladb.
 В ней реализована часть функциональности платной [Scylla Manager](https://docs.scylladb.com/operating-scylla/manager/) и [Medusa for Apache Cassandra](https://github.com/thelastpickle/cassandra-medusa).
@@ -40,7 +39,7 @@ Scylla-octopus - утилита для бэкапа и обслуживания 
 Планы:
 
 * Восстановление из бэкапов
-* Настрйока github actions для сборки docker-образа и запуска тестов
+* Настройка github actions для сборки docker-образа и запуска тестов
 ---------------------
 
 ### Usage
@@ -55,7 +54,7 @@ Scylla-octopus - утилита для бэкапа и обслуживания 
 
 Command-line flags:
 
-* `--config=...` - a path to configuration file (defaults to `config/remote.yml`)
+* `--config=...` - path to configuration file (defaults to `config/remote.yml`)
 * `--verbose`, `-v` - forces debug output (equivalent to `log.level=debug` and `commands.debug=true` in configuration file)
 
 ### Configuration
@@ -77,6 +76,8 @@ The options are mostly the same except the lack of `cluster.hosts` section.
   * It can be used with any s3-compatible storage.
   * If it is unavailable, or you only want to keep local backups, then set `backup.disableUploading` to `true`.
   * An alternative storage implementation (such as `rsync`) would be welcomed.
+* If backup compression is enabled with `archive.method: pigz`, then [pigz](https://zlib.net/pigz/) must be available on every database node.
+  * So far `pigz` is the only supported compression method, but we're open to suggestions.
 * Database nodes are running linux with an `sh` shell.
 * The tool is tested with recent (4.x) scylladb versions, but will probably work with older ones too. 
 
@@ -111,7 +112,7 @@ make prepare-test-node node=scylla-node1
 make prepare-test-node node=scylla-node2
 make prepare-test-node node=scylla-node3
 
-(we should really automate this with a single command)
+(this should really be automated with a single command)
 ``` 
 
 You can also create a database (keyspace) with some testing data: `make init-db node=scylla-node1` (this will be replicated to every node).
