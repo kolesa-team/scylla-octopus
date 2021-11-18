@@ -44,7 +44,7 @@ func clearDirectory(ctx context.Context, node *entity.Node, localPath string, ar
 		"sh",
 		"-c",
 		fmt.Sprintf(
-			`'cd %s && find * ! -name "%s" -exec rm -rf {} +'`,
+			`'cd %s && find * ! -name "%s" -prune -exec rm -rf {} +'`,
 			localPath,
 			archiveName,
 		),
