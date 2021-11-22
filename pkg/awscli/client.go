@@ -3,9 +3,9 @@ package awscli
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/kolesa-team/scylla-octopus/pkg/cmd"
 	"github.com/kolesa-team/scylla-octopus/pkg/entity"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"os/exec"
 	"strings"
@@ -67,16 +67,18 @@ func (c *Client) Upload(ctx context.Context, cmdExecutor cmd.Executor, source, d
 // ListBackups returns backups from a given directory
 func (c *Client) ListBackups(ctx context.Context, cmdExecutor cmd.Executor, basePath string) ([]entity.RemoteBackup, error) {
 	backups := []entity.RemoteBackup{}
-	// TODO the backups are kept at a 2nd leven of hierarchy, e.g. /basePath/scylla-node1/09-07-2021-10-29
+	// TODO the backups are kept at a 3rd leven of hierarchy, e.g. /basePath/datacenter/scylla-node1/09-07-2021-10-29
 	// this probably should not be hardcoded
-	paths, err := c.listDirectoriesRecursive(ctx, cmdExecutor, basePath, 2)
+	paths, err := c.listDirectoriesRecursive(ctx, cmdExecutor, basePath, 3)
 	if err != nil {
 		c.logger.Errorw(
 			"could not list backups",
 			"error", err,
 		)
 
-		return backups, err
+		// the error most probably means there are no files at given path,
+		// so we allow ourselves ignore it.
+		return backups, nil
 	}
 
 	for _, path := range paths {

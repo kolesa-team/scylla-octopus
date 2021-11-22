@@ -2,9 +2,9 @@ package scylla
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	"github.com/kolesa-team/scylla-octopus/pkg/cmd/test"
 	"github.com/kolesa-team/scylla-octopus/pkg/entity"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"testing"
 )
@@ -27,7 +27,7 @@ DN  172.20.0.3  205.89 KB  256          ?       ba29ac08-b405-4d26-8a8b-2b8c18c9
 		credentials: entity.Credentials{},
 		logger:      zap.S(),
 	}
-	status, err := client.getNodeStatus(context.Background(), entity.NewNode(
+	status, dc, err := client.getNodeStatus(context.Background(), entity.NewNode(
 		entity.NodeInfo{
 			IpAddress: "172.20.0.2",
 		},
@@ -35,7 +35,8 @@ DN  172.20.0.3  205.89 KB  256          ?       ba29ac08-b405-4d26-8a8b-2b8c18c9
 		nil,
 	))
 	require.NoError(t, err)
-	require.Equal(t, status, entity.NodeStatusOk)
+	require.Equal(t, entity.NodeStatusOk, status)
+	require.Equal(t, "DC1", dc)
 }
 
 func TestClient_NodeStatus_Error(t *testing.T) {
@@ -55,7 +56,7 @@ UN  172.20.0.3  205.89 KB  256          ?       ba29ac08-b405-4d26-8a8b-2b8c18c9
 		credentials: entity.Credentials{},
 		logger:      zap.S(),
 	}
-	status, err := client.getNodeStatus(context.Background(), entity.NewNode(
+	status, dc, err := client.getNodeStatus(context.Background(), entity.NewNode(
 		entity.NodeInfo{
 			IpAddress: "172.20.0.2",
 		},
@@ -63,7 +64,8 @@ UN  172.20.0.3  205.89 KB  256          ?       ba29ac08-b405-4d26-8a8b-2b8c18c9
 		nil,
 	))
 	require.NoError(t, err)
-	require.Equal(t, status, "DN", "статус узла должен быть равен DN (down, normal)")
+	require.Equal(t, "DC1", dc)
+	require.Equal(t, "DN", status, "node status must be DN (down, normal)")
 }
 
 func TestClient_ClusterName_Ok(t *testing.T) {

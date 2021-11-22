@@ -3,10 +3,10 @@ package cluster
 import (
 	"context"
 	"errors"
-	"github.com/stretchr/testify/require"
 	"github.com/kolesa-team/scylla-octopus/pkg/cmd"
 	"github.com/kolesa-team/scylla-octopus/pkg/cmd/local"
 	"github.com/kolesa-team/scylla-octopus/pkg/entity"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"testing"
 	"time"
@@ -24,7 +24,8 @@ func (l localCmdFactory) GetByHost(host string) (cmd.Executor, error) {
 func TestCluster_RunParallel_Ok(t *testing.T) {
 	cluster := NewCluster(
 		Options{
-			Hosts: []string{"host-1", "host-2"},
+			Hosts:          []string{"host-1", "host-2"},
+			SkipDnsResolve: true,
 		},
 		localCmdFactory{},
 		zap.S(),
@@ -57,7 +58,8 @@ func TestCluster_RunParallel_Ok(t *testing.T) {
 func TestCluster_RunParallel_WithContextTimeout(t *testing.T) {
 	cluster := NewCluster(
 		Options{
-			Hosts: []string{"host-1", "host-2"},
+			Hosts:          []string{"host-1", "host-2"},
+			SkipDnsResolve: true,
 		},
 		localCmdFactory{},
 		zap.S(),
@@ -99,7 +101,8 @@ func TestCluster_RunParallel_WithContextTimeout(t *testing.T) {
 func TestCluster_RunParallel_WithError(t *testing.T) {
 	cluster := NewCluster(
 		Options{
-			Hosts: []string{"host-1", "host-2"},
+			Hosts:          []string{"host-1", "host-2"},
+			SkipDnsResolve: true,
 		},
 		localCmdFactory{},
 		zap.S(),
@@ -141,7 +144,8 @@ func TestCluster_RunParallel_WithError(t *testing.T) {
 func TestCluster_Run_Ok(t *testing.T) {
 	cluster := NewCluster(
 		Options{
-			Hosts: []string{"host-1", "host-2"},
+			Hosts:          []string{"host-1", "host-2"},
+			SkipDnsResolve: true,
 		},
 		localCmdFactory{},
 		zap.S(),
@@ -175,7 +179,8 @@ func TestCluster_Run_Ok(t *testing.T) {
 func TestCluster_Run_WithError(t *testing.T) {
 	cluster := NewCluster(
 		Options{
-			Hosts: []string{"host-1", "host-2"},
+			Hosts:          []string{"host-1", "host-2"},
+			SkipDnsResolve: true,
 		},
 		localCmdFactory{},
 		zap.S(),

@@ -21,9 +21,11 @@ type Cluster struct {
 
 type Options struct {
 	// a list of hosts where the tool should run
-	Hosts    []string
-	Binaries entity.NodeBinaries
-	DataPath string `yaml:"dataPath"`
+	Hosts          []string
+	Binaries       entity.NodeBinaries
+	DataPath       string `yaml:"dataPath"`
+	ClusterName    string `yaml:"clusterName"`
+	SkipDnsResolve bool
 }
 
 // A factory interface that creates shell-command executors.
@@ -59,8 +61,13 @@ func NewCluster(
 				host,
 				opts.DataPath,
 				opts.Binaries,
-				true,
+				// resolve domain names except when running tests
+				opts.SkipDnsResolve == false,
 			),
+		}
+
+		if len(opts.ClusterName) > 0 {
+			node.Info.ClusterName = opts.ClusterName
 		}
 
 		cluster.nodes[host] = &node

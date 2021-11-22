@@ -7,6 +7,8 @@ credentials:
 
 cluster:
   dataPath: /var/lib/scylla/data
+  # by default, clusterName is taken from `nodetool describecluster`
+  # clusterName: my-cluster
   binaries:
     cqlsh: /usr/bin/cqlsh
     nodetool: /usr/bin/nodetool

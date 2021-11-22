@@ -20,6 +20,7 @@ type NodeInfo struct {
 	DomainName  string
 	DataPath    string
 	ClusterName string
+	Datacenter  string
 	// a status according to `nodetool status`
 	Status   string
 	Binaries NodeBinaries
@@ -87,11 +88,12 @@ func (n NodeInfo) IsStatusOk() bool {
 }
 
 // RemoteStoragePath returns a path where the backup from a node should be stored in s3.
-// The format is "cluster-name/short-domain-name"
+// The format is "cluster-name/datacenter/domain-name"
 func (n NodeInfo) RemoteStoragePath() string {
 	return fmt.Sprintf(
-		"%s/%s",
+		"%s/%s/%s",
 		n.ClusterName,
+		n.Datacenter,
 		n.ShortDomainName(),
 	)
 }
