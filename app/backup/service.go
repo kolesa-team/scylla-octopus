@@ -246,14 +246,16 @@ func (s *Service) localBackupExists(ctx context.Context, cmdExecutor cmd.Executo
 
 // Uploads the local directory to a remote storage.
 // Creates the following directory hierarchy:
-//├── cluster_name
-//│   ├── node_1_short_domain_name
-//│   │   ├── date(dd-mm-yyy-hh-mm)
-//│   │   │   ├── db_schema.cql
-//│   │   │   ├── data
-//│   │   │   │   ├── keyspaces
-//│   │   │   │   │   ├── tables
-//│   ├── node_2_short_domain_name...
+// -- cluster_name
+//    -- datacenter_name
+//      -- node_1_short_domain_name
+//        -- date(dd-mm-yyy-hh-mm)
+//          -- metadata.yml
+//          -- db_schema.cql
+//          -- data
+//            -- keyspaces
+//            -- tables
+//      -- node_2_short_domain_name...
 func (s *Service) upload(ctx context.Context, node *entity.Node, remotePath string) error {
 	logCtx := s.logger.With("host", node.Info.Host, "remotePath", remotePath)
 	logCtx.Infow("uploading backup", "remotePath", remotePath)
