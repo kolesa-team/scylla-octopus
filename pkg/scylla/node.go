@@ -71,20 +71,16 @@ func (c *Client) getNodeStatus(
 	return status, datacenter, nil
 }
 
-// a regexp to retrieve a datacenter name from `nodetool status` command
-var datacenterRegexp = regexp.MustCompile("Datacenter: (.+)")
-
 // Parses an output of `nodetool status`
 func parseNodeStatus(possibleNodeAddresses []string, output string) (status, datacenter string) {
-
-	datacenterMatches := datacenterRegexp.FindStringSubmatch(output)
-	if len(datacenterMatches) >= 2 {
-		datacenter = datacenterMatches[1]
-	}
-
 	lines := strings.Split(output, "\n")
 
 	for _, line := range lines {
+		if strings.HasPrefix(line, "Datacenter:") {
+			datacenter = strings.TrimSpace(strings.TrimPrefix(line, "Datacenter:"))
+			continue
+		}
+
 		isCurrentNode := false
 
 		for _, nodeAddr := range possibleNodeAddresses {
